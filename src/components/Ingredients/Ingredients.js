@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import uuid from "react-uuid";
 
 import IngredientForm from './IngredientForm';
 import IngredientList from "./IngredientList";
@@ -10,9 +9,16 @@ const Ingredients = () => {
 
   const addIngredient = ingredient => {
     fetch('https://burgerhooks.firebaseio.com/ingredients.json', {
-      method: 'POST'
+      method: 'POST',
+      body: JSON.stringify(ingredient),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-    setIngredients(prevIngredients => [...prevIngredients, { id: uuid(), ...ingredient }])
+      .then(response => response.json())
+        .then(responseData => {
+          setIngredients(prevIngredients => [...prevIngredients, { id: responseData.name, ...ingredient }])
+        })
   }
 
   const removeIngredient = id => {
